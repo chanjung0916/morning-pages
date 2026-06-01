@@ -39,11 +39,23 @@
     }
 
     /* ── 공통 레이아웃 ── */
+    .reveal .slides section { height: 100%; }
+
     .slide-inner {
       position: relative;
       width: 100%;
       height: 100%;
-      padding: 28px 52px 36px;
+      padding: 28px 52px 44px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 컨텐츠 영역이 남은 공간 채우기 */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     /* 상단 챕터 레이블 */
@@ -427,19 +439,21 @@
         <div class="deco-circle-1"></div>
         <div class="deco-circle-2"></div>
 
-        <div class="chapter-label" style="margin-top:16px;">CHAPTER 01</div>
-        <div class="app-name">Morning Pages ☀️</div>
-        <div class="tagline">매일 아침 2~3분, 오늘의 나를 기록한다</div>
+        <div class="slide-body" style="justify-content:flex-start; padding-top:30px;">
+          <div class="chapter-label">CHAPTER 01</div>
+          <div class="app-name">Morning Pages ☀️</div>
+          <div class="tagline">매일 아침 2~3분, 오늘의 나를 기록한다</div>
 
-        <div class="meta">
-          2026 모바일 앱 개발 프로젝트 &nbsp;|&nbsp; 중간 발표
-        </div>
+          <div class="meta">
+            2026 모바일 앱 개발 프로젝트 &nbsp;|&nbsp; 중간 발표
+          </div>
 
-        <div class="badge-row">
-          <span class="badge">📱 React Native</span>
-          <span class="badge">🔷 TypeScript</span>
-          <span class="badge">💾 AsyncStorage</span>
-          <span class="badge">🏛 Layered Architecture</span>
+          <div class="badge-row">
+            <span class="badge">📱 React Native</span>
+            <span class="badge">🔷 TypeScript</span>
+            <span class="badge">💾 AsyncStorage</span>
+            <span class="badge">🏛 Layered Architecture</span>
+          </div>
         </div>
 
         <div class="s1-footer">morning page</div>
@@ -456,6 +470,7 @@
         <div class="slide-sub">일기를 쓰고 싶은데 — 막상 쉽지 않다</div>
         <hr class="hdivider" />
 
+        <div class="slide-body">
         <div class="problem-grid">
           <div class="pcard">
             <div class="pcard-num">01</div>
@@ -478,6 +493,7 @@
             <div class="pcard-desc">날짜·기분별 과거 일기를<br>찾기 어렵다</div>
           </div>
         </div>
+        </div><!-- slide-body -->
 
         <div class="slide-footer">
           <span>morning page &nbsp;|&nbsp; Mobile App Project</span>
@@ -496,6 +512,7 @@
         <div class="slide-sub">Layered Architecture + MVVM 패턴</div>
         <hr class="hdivider" />
 
+        <div class="slide-body">
         <div class="arch-flow">
           <div class="arch-box">
             <div class="arch-icon">📱</div>
@@ -525,6 +542,7 @@
         <div class="arch-caption">
           사용자 인터랙션 → 화면 렌더링 → 비즈니스 로직 → 데이터 저장
         </div>
+        </div><!-- slide-body -->
 
         <div class="slide-footer">
           <span>morning page &nbsp;|&nbsp; Mobile App Project</span>
@@ -543,6 +561,7 @@
         <div class="slide-sub">단일 코드베이스 · 오프라인 우선 설계</div>
         <hr class="hdivider" />
 
+        <div class="slide-body">
         <div class="stack-grid">
           <div class="scard">
             <div class="scard-icon">⚛️</div>
@@ -587,6 +606,7 @@
             </div>
           </div>
         </div>
+        </div><!-- slide-body -->
 
         <div class="slide-footer">
           <span>morning page &nbsp;|&nbsp; Mobile App Project</span>
@@ -605,6 +625,7 @@
         <div class="slide-sub">중간 발표 기준 — 전체 진도</div>
         <hr class="hdivider" />
 
+        <div class="slide-body">
         <table class="wbs-table">
           <thead>
             <tr>
@@ -651,6 +672,7 @@
           <div class="progress-fill"></div>
         </div>
         <div class="progress-label">전체 진행률 약 65% &nbsp;—&nbsp; Must 기능 100% 완성</div>
+        </div><!-- slide-body -->
 
         <div class="slide-footer">
           <span>morning page &nbsp;|&nbsp; Mobile App Project</span>
@@ -667,6 +689,7 @@
         <div class="deco-c1"></div>
         <div class="deco-c2"></div>
 
+        <div class="slide-body" style="justify-content:flex-start; padding-top:20px;">
         <div class="big-num">06</div>
         <div class="closing-label">DEMO</div>
         <div class="closing-title">데모 시연 🎬</div>
@@ -688,7 +711,8 @@
             <div class="ccard-name">클린 아키텍처</div>
             <div class="ccard-desc">Layered + MVVM<br>Jest 단위 테스트</div>
           </div>
-        </div>
+        </div><!-- closing-cards -->
+        </div><!-- slide-body -->
 
         <div class="s6-footer">morning page</div>
       </div>
@@ -707,8 +731,10 @@
     progress: true,
     center: false,
     width: 960,
-    height: 580,
+    height: 540,   /* 16:9 */
     margin: 0.04,
+    minScale: 0.2,
+    maxScale: 2.0,
   });
 </script>
 </body>
