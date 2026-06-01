@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /c/Morning_Pages/.planning/decisions /c/Morning_Pages/docs)",
+      "PowerShell(node -v)",
+      "PowerShell(npm -v)",
+      "Bash(ls /usr/bin/convert 2>/dev/null || which convert 2>/dev/null || echo \"imagemagick not found\")",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(del \"C:\\\\Morning_Pages\\\\src\\\\data\\\\repositories\\\\CustomTopicRepository.ts\")",
+      "Bash(del \"C:\\\\Morning_Pages\\\\src\\\\presentation\\\\components\\\\AddTopicModal.tsx\")",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const pkg = require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(pkg.dependencies\\), null, 2\\)\\)\")",
+      "Bash([ -s \"C:/Morning_Pages/$f\" ])",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Morning_Pages\\.planning\\decisions"
+    ]
+  }
+}
