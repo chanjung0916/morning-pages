@@ -109,7 +109,7 @@ npx jest
 
 ## 📊 중간 발표 자료
 
-👉 **[발표 슬라이드 보기](https://[USERNAME].github.io/morning-pages/presentation/)**
+👉 **[발표 슬라이드 보기](https://chanjung0916.github.io/morning-pages/presentation/)**
 
 ---
 
