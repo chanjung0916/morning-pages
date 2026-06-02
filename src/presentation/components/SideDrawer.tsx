@@ -23,7 +23,7 @@ const MENU_ITEMS: MenuItem[] = [
   { icon: '📚', label: '과거 일기 기록', route: '/records' },
   { icon: '⭐', label: '즐겨찾기',       route: '/favorites' },
   { icon: '👤', label: '프로필',         route: undefined },
-  { icon: '⚙️', label: '설정',          route: undefined },
+  { icon: '⚙️', label: '설정',          route: '/settings' },
 ];
 
 const DRAWER_W = 260;

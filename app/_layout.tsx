@@ -1,7 +1,23 @@
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { DiaryProvider } from '../src/application/context/DiaryContext';
+import {
+  loadNotificationTime,
+  scheduleDailyNotification,
+  requestNotificationPermission,
+} from '../src/utils/notification';
 
 export default function RootLayout() {
+  useEffect(() => {
+    (async () => {
+      const granted = await requestNotificationPermission();
+      if (granted) {
+        const { hour, minute } = await loadNotificationTime();
+        await scheduleDailyNotification(hour, minute);
+      }
+    })();
+  }, []);
+
   return (
     <DiaryProvider>
       <Stack>
@@ -25,6 +41,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="calendar"
           options={{ title: '캘린더' }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{ title: '설정' }}
         />
       </Stack>
     </DiaryProvider>
