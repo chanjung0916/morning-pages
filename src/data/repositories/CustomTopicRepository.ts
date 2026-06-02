@@ -7,6 +7,7 @@ export interface CustomTopic {
   prompts: string[];
   category: string;   // 프롬프트 생성 시 입력한 키워드 (예: 감사, 성장, 사랑)
   createdAt: string;
+  updatedAt?: string; // 통합 시 업데이트 시간
 }
 
 const TOPICS_KEY = '@morning_pages:custom_topics';
@@ -38,15 +39,37 @@ export class CustomTopicRepository {
   /** AI 파싱 결과를 카테고리 태그와 함께 한 번에 저장 */
   async saveMany(items: { topic: string; prompts: string[] }[], category: string): Promise<CustomTopic[]> {
     const all = await this.findAll();
-    const newTopics: CustomTopic[] = items.map((item) => ({
-      id:        generateId(),
-      topic:     item.topic,
-      prompts:   item.prompts,
-      category,
-      createdAt: new Date().toISOString(),
-    }));
-    await AsyncStorage.setItem(TOPICS_KEY, JSON.stringify([...all, ...newTopics]));
-    return newTopics;
+    const result: CustomTopic[] = [...all];
+    const merged: CustomTopic[] = [];
+
+    for (const item of items) {
+      const existing = result.find(
+        (t) => t.topic === item.topic && t.category === category
+      );
+
+      if (existing) {
+        // 같은 이름 주제가 있으면 프롬프트 통합 (중복 제거)
+        const mergedPrompts = [...new Set([...existing.prompts, ...item.prompts])];
+        existing.prompts = mergedPrompts;
+        existing.updatedAt = new Date().toISOString();
+        merged.push(existing);
+      } else {
+        // 새 주제 추가
+        const newTopic: CustomTopic = {
+          id:        generateId(),
+          topic:     item.topic,
+          prompts:   item.prompts,
+          category,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        result.push(newTopic);
+        merged.push(newTopic);
+      }
+    }
+
+    await AsyncStorage.setItem(TOPICS_KEY, JSON.stringify(result));
+    return merged;
   }
 
   // ── 오늘의 주제 배정 (카테고리별) ────────────
