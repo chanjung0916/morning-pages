@@ -10,134 +10,217 @@ import {
   cancelAllNotifications,
   requestNotificationPermission,
 } from '../../utils/notification';
+import { useTheme, FontSize } from '../../application/context/ThemeContext';
+import { CustomTopicRepository, CustomTopic } from '../../data/repositories/CustomTopicRepository';
+
+const topicRepo = new CustomTopicRepository();
 
 export default function SettingsScreen() {
-  const [enabled, setEnabled] = useState(false);
+  const { isDark, fontSize, colors, fontScale, toggleDark, setFontSize } = useTheme();
+
+  // 알림
+  const [notifEnabled, setNotifEnabled] = useState(false);
   const [hour, setHour] = useState(8);
   const [minute, setMinute] = useState(0);
-  const [saved, setSaved] = useState(false);
+  const [timeSaved, setTimeSaved] = useState(false);
+
+  // 저장된 주제
+  const [topics, setTopics] = useState<CustomTopic[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       const time = await loadNotificationTime();
       setHour(time.hour);
       setMinute(time.minute);
-
       if (Platform.OS !== 'web') {
-        const { status } = await import('expo-notifications')
-          .then(n => n.getPermissionsAsync());
-        setEnabled(status === 'granted');
+        const { status } = await (await import('expo-notifications')).getPermissionsAsync();
+        setNotifEnabled(status === 'granted');
       }
+      const all = await topicRepo.findAll();
+      setTopics(all);
     })();
   }, []);
 
-  const handleToggle = async (value: boolean) => {
+  // ── 알림 ──────────────────────────────────────
+  const handleNotifToggle = async (value: boolean) => {
     if (value) {
       const granted = await requestNotificationPermission();
-      if (!granted) {
-        Alert.alert('알림 권한 필요', '설정에서 알림 권한을 허용해주세요.');
-        return;
-      }
+      if (!granted) { Alert.alert('알림 권한 필요', '설정에서 알림 권한을 허용해주세요.'); return; }
       await scheduleDailyNotification(hour, minute);
     } else {
       await cancelAllNotifications();
     }
-    setEnabled(value);
+    setNotifEnabled(value);
   };
 
-  const handleSave = async () => {
+  const handleTimeSave = async () => {
     await saveNotificationTime(hour, minute);
-    if (enabled) {
-      await scheduleDailyNotification(hour, minute);
-    }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (notifEnabled) await scheduleDailyNotification(hour, minute);
+    setTimeSaved(true);
+    setTimeout(() => setTimeSaved(false), 2000);
   };
 
-  const adjustHour = (delta: number) => {
-    setHour(h => (h + delta + 24) % 24);
+  // ── 저장된 주제 삭제 ──────────────────────────
+  const handleDeleteTopic = (id: string) => {
+    Alert.alert('주제 삭제', '이 주제를 삭제할까요?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제', style: 'destructive',
+        onPress: async () => {
+          const all = await topicRepo.findAll();
+          const filtered = all.filter(t => t.id !== id);
+          const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+          await AsyncStorage.setItem('@morning_pages:custom_topics', JSON.stringify(filtered));
+          setTopics(filtered);
+        },
+      },
+    ]);
   };
 
-  const adjustMinute = (delta: number) => {
-    setMinute(m => (m + delta + 60) % 60);
-  };
+  // ── 카테고리 그룹핑 ────────────────────────────
+  const categories = [...new Set(topics.map(t => t.category).filter(Boolean))];
+
+  const s = makeStyles(colors, fontScale);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={[s.container]} contentContainerStyle={s.content}>
 
-      {/* 알림 섹션 */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>알림</Text>
-
-        {/* 알림 ON/OFF */}
-        <View style={styles.row}>
+      {/* ── 알림 ── */}
+      <Text style={s.sectionTitle}>알림</Text>
+      <View style={s.card}>
+        <View style={s.row}>
           <View>
-            <Text style={styles.rowLabel}>매일 알림</Text>
-            <Text style={styles.rowSub}>설정한 시간에 일기 작성 알림</Text>
+            <Text style={s.rowLabel}>매일 알림</Text>
+            <Text style={s.rowSub}>설정한 시간에 일기 작성 알림</Text>
           </View>
-          <Switch
-            value={enabled}
-            onValueChange={handleToggle}
-            trackColor={{ true: '#CC785C' }}
-            thumbColor="#fff"
-          />
+          <Switch value={notifEnabled} onValueChange={handleNotifToggle}
+            trackColor={{ true: colors.accent }} thumbColor="#fff" />
         </View>
 
-        {/* 시간 선택 */}
-        {enabled && (
-          <View style={styles.timeSection}>
-            <Text style={styles.timeLabel}>알림 시간</Text>
-
-            <View style={styles.timePicker}>
-              {/* 시 */}
-              <View style={styles.timeUnit}>
-                <TouchableOpacity style={styles.timeBtn} onPress={() => adjustHour(1)}>
-                  <Text style={styles.timeBtnText}>▲</Text>
+        {notifEnabled && (
+          <View style={s.timeSection}>
+            <Text style={s.rowSub}>알림 시간</Text>
+            <View style={s.timePicker}>
+              <View style={s.timeUnit}>
+                <TouchableOpacity style={s.timeBtn} onPress={() => setHour(h => (h + 1) % 24)}>
+                  <Text style={s.timeBtnText}>▲</Text>
                 </TouchableOpacity>
-                <Text style={styles.timeValue}>
-                  {String(hour).padStart(2, '0')}
-                </Text>
-                <TouchableOpacity style={styles.timeBtn} onPress={() => adjustHour(-1)}>
-                  <Text style={styles.timeBtnText}>▼</Text>
+                <Text style={s.timeValue}>{String(hour).padStart(2, '0')}</Text>
+                <TouchableOpacity style={s.timeBtn} onPress={() => setHour(h => (h - 1 + 24) % 24)}>
+                  <Text style={s.timeBtnText}>▼</Text>
                 </TouchableOpacity>
               </View>
-
-              <Text style={styles.timeSep}>:</Text>
-
-              {/* 분 */}
-              <View style={styles.timeUnit}>
-                <TouchableOpacity style={styles.timeBtn} onPress={() => adjustMinute(5)}>
-                  <Text style={styles.timeBtnText}>▲</Text>
+              <Text style={s.timeSep}>:</Text>
+              <View style={s.timeUnit}>
+                <TouchableOpacity style={s.timeBtn} onPress={() => setMinute(m => (m + 5) % 60)}>
+                  <Text style={s.timeBtnText}>▲</Text>
                 </TouchableOpacity>
-                <Text style={styles.timeValue}>
-                  {String(minute).padStart(2, '0')}
-                </Text>
-                <TouchableOpacity style={styles.timeBtn} onPress={() => adjustMinute(-5)}>
-                  <Text style={styles.timeBtnText}>▼</Text>
+                <Text style={s.timeValue}>{String(minute).padStart(2, '0')}</Text>
+                <TouchableOpacity style={s.timeBtn} onPress={() => setMinute(m => (m - 5 + 60) % 60)}>
+                  <Text style={s.timeBtnText}>▼</Text>
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* 저장 버튼 */}
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              <Text style={styles.saveBtnText}>
-                {saved ? '✓ 저장됐습니다!' : '알림 시간 저장'}
-              </Text>
+            <TouchableOpacity style={s.saveBtn} onPress={handleTimeSave}>
+              <Text style={s.saveBtnText}>{timeSaved ? '✓ 저장됐습니다!' : '알림 시간 저장'}</Text>
             </TouchableOpacity>
           </View>
         )}
       </View>
 
-      {/* 앱 정보 섹션 */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>앱 정보</Text>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>버전</Text>
-          <Text style={styles.rowSub}>v1.0.0</Text>
+      {/* ── 화면 설정 ── */}
+      <Text style={s.sectionTitle}>화면</Text>
+      <View style={s.card}>
+
+        {/* 다크모드 */}
+        <View style={s.row}>
+          <View>
+            <Text style={s.rowLabel}>다크 모드</Text>
+            <Text style={s.rowSub}>어두운 화면으로 전환</Text>
+          </View>
+          <Switch value={isDark} onValueChange={toggleDark}
+            trackColor={{ true: colors.accent }} thumbColor="#fff" />
         </View>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>저장 방식</Text>
-          <Text style={styles.rowSub}>기기 로컬 저장 (오프라인)</Text>
+
+        {/* 폰트 크기 */}
+        <View style={[s.row, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
+          <Text style={s.rowLabel}>글씨 크기</Text>
+          <View style={s.fontRow}>
+            {(['small', 'medium', 'large'] as FontSize[]).map((size) => (
+              <TouchableOpacity
+                key={size}
+                style={[s.fontBtn, fontSize === size && s.fontBtnActive]}
+                onPress={() => setFontSize(size)}
+              >
+                <Text style={[s.fontBtnText, fontSize === size && s.fontBtnTextActive]}>
+                  {size === 'small' ? '작게' : size === 'medium' ? '보통' : '크게'}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* ── 저장된 주제 관리 ── */}
+      <Text style={s.sectionTitle}>저장된 주제</Text>
+      <View style={s.card}>
+        {categories.length === 0 ? (
+          <View style={s.emptyBox}>
+            <Text style={s.emptyText}>저장된 주제가 없어요</Text>
+            <Text style={s.rowSub}>홈 화면에서 주제를 생성해보세요</Text>
+          </View>
+        ) : (
+          categories.map((cat) => {
+            const catTopics = topics.filter(t => t.category === cat);
+            const isOpen = expandedCategory === cat;
+            return (
+              <View key={cat}>
+                {/* 카테고리 헤더 */}
+                <TouchableOpacity
+                  style={s.catHeader}
+                  onPress={() => setExpandedCategory(isOpen ? null : cat)}
+                >
+                  <View>
+                    <Text style={s.catTitle}>{cat}</Text>
+                    <Text style={s.rowSub}>{catTopics.length}개의 주제</Text>
+                  </View>
+                  <Text style={[s.rowSub, { fontSize: 18 }]}>{isOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* 주제 목록 */}
+                {isOpen && catTopics.map((topic) => (
+                  <View key={topic.id} style={s.topicRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.topicTitle}>{topic.topic}</Text>
+                      <Text style={s.rowSub} numberOfLines={1}>
+                        {topic.prompts.join(' · ')}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={s.deleteBtn}
+                      onPress={() => handleDeleteTopic(topic.id)}
+                    >
+                      <Text style={s.deleteBtnText}>삭제</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            );
+          })
+        )}
+      </View>
+
+      {/* ── 앱 정보 ── */}
+      <Text style={s.sectionTitle}>앱 정보</Text>
+      <View style={s.card}>
+        <View style={s.row}>
+          <Text style={s.rowLabel}>버전</Text>
+          <Text style={s.rowSub}>v1.0.0</Text>
+        </View>
+        <View style={[s.row, { borderBottomWidth: 0 }]}>
+          <Text style={s.rowLabel}>저장 방식</Text>
+          <Text style={s.rowSub}>기기 로컬 (오프라인)</Text>
         </View>
       </View>
 
@@ -145,91 +228,97 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF9F5' },
-  content: { padding: 20, gap: 24 },
+function makeStyles(colors: ReturnType<typeof useTheme>['colors'], fontScale: ReturnType<typeof useTheme>['fontScale']) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.bg },
+    content: { padding: 20, paddingBottom: 40, gap: 8 },
 
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E7E5E4',
-  },
+    sectionTitle: {
+      fontSize: fontScale.xs,
+      fontWeight: '700',
+      color: colors.accent,
+      letterSpacing: 0.5,
+      textTransform: 'uppercase',
+      marginTop: 16,
+      marginBottom: 6,
+      paddingHorizontal: 4,
+    },
 
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#CC785C',
-    padding: 16,
-    paddingBottom: 8,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F0EC',
-  },
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
 
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F0EC',
-  },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
 
-  rowLabel: { fontSize: 15, color: '#1C1917', fontWeight: '500' },
-  rowSub:   { fontSize: 13, color: '#78716C', marginTop: 2 },
+    rowLabel: { fontSize: fontScale.md, color: colors.text, fontWeight: '500' },
+    rowSub:   { fontSize: fontScale.sm, color: colors.subText, marginTop: 2 },
 
-  timeSection: {
-    padding: 16,
-    alignItems: 'center',
-    gap: 16,
-  },
+    // 알림 시간
+    timeSection: { padding: 16, alignItems: 'center', gap: 16 },
+    timePicker:  { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    timeUnit:    { alignItems: 'center', gap: 8 },
+    timeBtn: {
+      width: 44, height: 36,
+      backgroundColor: colors.border,
+      borderRadius: 8, alignItems: 'center', justifyContent: 'center',
+    },
+    timeBtnText: { fontSize: fontScale.sm, color: colors.subText },
+    timeValue:   { fontSize: 36, fontWeight: '700', color: colors.text, width: 64, textAlign: 'center' },
+    timeSep:     { fontSize: 32, fontWeight: '700', color: colors.text, marginTop: -8 },
+    saveBtn: {
+      backgroundColor: colors.accent, borderRadius: 10,
+      paddingVertical: 12, alignSelf: 'stretch', alignItems: 'center',
+    },
+    saveBtnText: { fontSize: fontScale.md, fontWeight: '700', color: '#fff' },
 
-  timeLabel: {
-    fontSize: 13,
-    color: '#78716C',
-    alignSelf: 'flex-start',
-  },
+    // 폰트 크기
+    fontRow: { flexDirection: 'row', gap: 8 },
+    fontBtn: {
+      flex: 1, paddingVertical: 10,
+      borderRadius: 8, borderWidth: 1.5,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
+    fontBtnActive:     { borderColor: colors.accent, backgroundColor: colors.accent + '18' },
+    fontBtnText:       { fontSize: fontScale.sm, color: colors.subText, fontWeight: '600' },
+    fontBtnTextActive: { color: colors.accent },
 
-  timePicker: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
+    // 저장된 주제
+    emptyBox: { padding: 24, alignItems: 'center', gap: 6 },
+    emptyText: { fontSize: fontScale.md, color: colors.subText },
 
-  timeUnit: { alignItems: 'center', gap: 8 },
+    catHeader: {
+      flexDirection: 'row', alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+      borderBottomWidth: 1, borderBottomColor: colors.border,
+    },
+    catTitle: { fontSize: fontScale.md, fontWeight: '700', color: colors.text },
 
-  timeBtn: {
-    width: 44,
-    height: 36,
-    backgroundColor: '#F3F0EC',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    topicRow: {
+      flexDirection: 'row', alignItems: 'center',
+      paddingVertical: 12, paddingHorizontal: 16,
+      borderBottomWidth: 1, borderBottomColor: colors.border,
+      gap: 12,
+    },
+    topicTitle: { fontSize: fontScale.sm, fontWeight: '600', color: colors.text, marginBottom: 2 },
 
-  timeBtnText: { fontSize: 14, color: '#78716C' },
-
-  timeValue: {
-    fontSize: 36,
-    fontWeight: '700',
-    color: '#1C1917',
-    width: 64,
-    textAlign: 'center',
-  },
-
-  timeSep: { fontSize: 32, fontWeight: '700', color: '#1C1917', marginTop: -8 },
-
-  saveBtn: {
-    backgroundColor: '#CC785C',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    alignSelf: 'stretch',
-    alignItems: 'center',
-  },
-
-  saveBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
-});
+    deleteBtn: {
+      paddingHorizontal: 12, paddingVertical: 6,
+      borderRadius: 6,
+      backgroundColor: '#FEE2E2',
+    },
+    deleteBtnText: { fontSize: fontScale.xs, fontWeight: '700', color: '#DC2626' },
+  });
+}

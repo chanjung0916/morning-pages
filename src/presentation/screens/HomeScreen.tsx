@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDiary } from '../../application/context/DiaryContext';
+import { useTheme } from '../../application/context/ThemeContext';
 import { today, formatDate } from '../../utils/date';
 import { Colors } from '../theme/colors';
 import { Diary } from '../../domain/entities/Diary';
@@ -15,6 +16,7 @@ import TopicPromptModal from '../components/TopicPromptModal';
 export default function HomeScreen() {
   const router = useRouter();
   const { diaries, isLoading, loadDiaries } = useDiary();
+  const { colors, fontScale } = useTheme();
   const [drawerOpen,  setDrawerOpen]  = useState(false);
   const [promptOpen,  setPromptOpen]  = useState(false);
 
@@ -91,11 +93,11 @@ export default function HomeScreen() {
   );
 
   if (isLoading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color={Colors.primary} /></View>;
+    return <View style={[styles.center, { backgroundColor: colors.bg }]}><ActivityIndicator size="large" color={colors.accent} /></View>;
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <FlatList
         data={diaries.filter((d) => d.date !== today())}
         keyExtractor={(item) => item.id}

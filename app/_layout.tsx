@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { DiaryProvider } from '../src/application/context/DiaryContext';
+import { ThemeProvider } from '../src/application/context/ThemeContext';
 import {
   loadNotificationTime,
   scheduleDailyNotification,
@@ -19,6 +20,7 @@ export default function RootLayout() {
   }, []);
 
   return (
+    <ThemeProvider>
     <DiaryProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -48,5 +50,6 @@ export default function RootLayout() {
         />
       </Stack>
     </DiaryProvider>
+    </ThemeProvider>
   );
 }
