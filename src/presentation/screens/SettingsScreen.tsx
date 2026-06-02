@@ -61,7 +61,7 @@ export default function SettingsScreen() {
     setTimeout(() => setTimeSaved(false), 2000);
   };
 
-  // ── 저장된 주제 삭제 ──────────────────────────
+  // ── 저장된 주제 삭제 (개별) ──────────────────────────
   const handleDeleteTopic = (id: string) => {
     Alert.alert('주제 삭제', '이 주제를 삭제할까요?', [
       { text: '취소', style: 'cancel' },
@@ -76,6 +76,29 @@ export default function SettingsScreen() {
         },
       },
     ]);
+  };
+
+  // ── 대주제(카테고리) 전체 삭제 ───────────────────
+  const handleDeleteCategory = (category: string) => {
+    const count = topics.filter(t => t.category === category).length;
+    Alert.alert(
+      `"${category}" 전체 삭제`,
+      `${count}개의 주제가 모두 삭제됩니다.`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '전체 삭제', style: 'destructive',
+          onPress: async () => {
+            const all = await topicRepo.findAll();
+            const filtered = all.filter(t => t.category !== category);
+            const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+            await AsyncStorage.setItem('@morning_pages:custom_topics', JSON.stringify(filtered));
+            setTopics(filtered);
+            setExpandedCategory(null);
+          },
+        },
+      ]
+    );
   };
 
   // ── 카테고리 그룹핑 ────────────────────────────
@@ -185,7 +208,15 @@ export default function SettingsScreen() {
                     <Text style={s.catTitle}>{cat}</Text>
                     <Text style={s.rowSub}>{catTopics.length}개의 주제</Text>
                   </View>
-                  <Text style={[s.rowSub, { fontSize: 18 }]}>{isOpen ? '▲' : '▼'}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <TouchableOpacity
+                      style={s.catDeleteBtn}
+                      onPress={() => handleDeleteCategory(cat)}
+                    >
+                      <Text style={s.catDeleteBtnText}>전체 삭제</Text>
+                    </TouchableOpacity>
+                    <Text style={[s.rowSub, { fontSize: 18 }]}>{isOpen ? '▲' : '▼'}</Text>
+                  </View>
                 </TouchableOpacity>
 
                 {/* 주제 목록 */}
@@ -305,6 +336,12 @@ function makeStyles(colors: ReturnType<typeof useTheme>['colors'], fontScale: Re
       borderBottomWidth: 1, borderBottomColor: colors.border,
     },
     catTitle: { fontSize: fontScale.md, fontWeight: '700', color: colors.text },
+    catDeleteBtn: {
+      paddingHorizontal: 10, paddingVertical: 5,
+      borderRadius: 6,
+      backgroundColor: '#FEE2E2',
+    },
+    catDeleteBtnText: { fontSize: fontScale.xs, fontWeight: '700', color: '#DC2626' },
 
     topicRow: {
       flexDirection: 'row', alignItems: 'center',
