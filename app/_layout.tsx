@@ -22,6 +22,10 @@ export default function RootLayout() {
           name="favorites"
           options={{ title: '즐겨찾기' }}
         />
+        <Stack.Screen
+          name="calendar"
+          options={{ title: '캘린더' }}
+        />
       </Stack>
     </DiaryProvider>
   );

@@ -19,6 +19,7 @@ interface Props {
 }
 
 const MENU_ITEMS: MenuItem[] = [
+  { icon: '📅', label: '캘린더',         route: '/calendar' },
   { icon: '📚', label: '과거 일기 기록', route: '/records' },
   { icon: '⭐', label: '즐겨찾기',       route: '/favorites' },
   { icon: '👤', label: '프로필',         route: undefined },
