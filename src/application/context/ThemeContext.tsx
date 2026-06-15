@@ -36,21 +36,21 @@ const FONT_SCALES: Record<FontSize, ThemeValues['fontScale']> = {
 };
 
 const LIGHT_COLORS: ThemeValues['colors'] = {
-  bg:      '#FAF9F5',
-  card:    '#EFE9DE',
-  text:    '#1C1917',
-  subText: '#78716C',
-  border:  '#E7E5E4',
-  accent:  '#CC785C',
+  bg:      '#ffffff',   // Canvas
+  card:    '#f2f2f2',   // Canvas Soft
+  text:    '#25282b',   // Ink
+  subText: '#7e7e7e',   // Body
+  border:  '#e5e5e5',   // Hairline
+  accent:  '#d97706',   // Warm Amber
 };
 
 const DARK_COLORS: ThemeValues['colors'] = {
-  bg:      '#1C1917',
-  card:    '#292524',
-  text:    '#FAF9F5',
-  subText: '#A8A29E',
-  border:  '#3F3A37',
-  accent:  '#E8A55A',
+  bg:      '#1e2124',   // 더 깊은 다크
+  card:    '#2c2f33',   // 카드
+  text:    '#d4d4d4',   // 눈 편한 오프화이트
+  subText: '#8a8a8a',   // 서브텍스트
+  border:  '#3a3d42',   // 구분선
+  accent:  '#f59e0b',   // Amber (다크 위에서 밝게)
 };
 
 const ThemeContext = createContext<ThemeValues>({} as ThemeValues);

@@ -4,6 +4,7 @@ import {
   StyleSheet, ScrollView, Animated,
 } from 'react-native';
 import { Diary } from '../../domain/entities/Diary';
+import { useTheme } from '../../application/context/ThemeContext';
 
 interface Props {
   diaries: Diary[];
@@ -25,10 +26,10 @@ function toKorDate(dateStr: string): string {
   return `${parseInt(m, 10)}월 ${parseInt(d, 10)}일`;
 }
 
-function getColor(inYear: boolean, hasDiary: boolean): string {
+function getColor(inYear: boolean, hasDiary: boolean, emptyColor: string): string {
   if (!inYear)  return 'transparent';
-  if (hasDiary) return '#F59E0B';   // 기록 있음 → 황금
-  return '#EDE8E3';                  // 기록 없음 → 연한 회색
+  if (hasDiary) return '#d97706';
+  return emptyColor;
 }
 
 interface CellData {
@@ -38,10 +39,15 @@ interface CellData {
   diaryContent?: string;
 }
 
+const TOOLTIP_W = 240;
+
 interface Tooltip { x: number; y: number; row: number; date: string; content?: string; }
 
 export default function ContributionGraph({ diaries, onDayPress }: Props) {
-  const scrollRef   = useRef<ScrollView>(null);
+  const { isDark } = useTheme();
+  const emptyColor = isDark ? '#2e3237' : '#eeeeee';
+  const labelColor = isDark ? '#606060' : '#78716C';
+  const scrollRef  = useRef<ScrollView>(null);
   const scrollX     = useRef(0);
   const fadeAnim    = useRef(new Animated.Value(0)).current;
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
@@ -96,9 +102,11 @@ export default function ContributionGraph({ diaries, onDayPress }: Props) {
     setTimeout(() => scrollRef.current?.scrollTo({ x: offset, animated: false }), 200);
   }, [todayCol]);
 
+  const DAY_LABEL_W = 20; // dayLabelCol 너비
+
   const showTooltip = (c: CellData) => {
-    // 화면 기준 x 위치 = 셀 왼쪽 - 현재 스크롤 오프셋
-    const rawX = c.col * (CELL + GAP) - scrollX.current;
+    // wrapper 기준 x: 셀 위치 - 스크롤 오프셋 + 요일레이블 너비
+    const rawX = c.col * (CELL + GAP) - scrollX.current + DAY_LABEL_W;
     const x    = Math.max(4, rawX);
     const y    = MONTH_H + 4 + c.row * (CELL + GAP);
 
@@ -126,7 +134,7 @@ export default function ContributionGraph({ diaries, onDayPress }: Props) {
                 justifyContent: 'center', alignItems: 'flex-end', paddingRight: 3,
               }}
             >
-              <Text style={[styles.dayLabel, { opacity: i % 2 === 0 ? 0 : 1 }]}>{d}</Text>
+              <Text style={[styles.dayLabel, { opacity: i % 2 === 0 ? 0 : 1, color: labelColor }]}>{d}</Text>
             </View>
           ))}
         </View>
@@ -147,7 +155,7 @@ export default function ContributionGraph({ diaries, onDayPress }: Props) {
               {Object.entries(monthPositions).map(([mo, col]) => (
                 <Text
                   key={mo}
-                  style={[styles.monthLabel, { left: col * (CELL + GAP), top: 0 }]}
+                  style={[styles.monthLabel, { left: col * (CELL + GAP), top: 0, color: labelColor }]}
                 >
                   {MONTHS[Number(mo)]}
                 </Text>
@@ -166,7 +174,7 @@ export default function ContributionGraph({ diaries, onDayPress }: Props) {
                     {
                       left: c.col * (CELL + GAP),
                       top:  MONTH_H + 4 + c.row * (CELL + GAP),
-                      backgroundColor: getColor(c.inYear, c.hasDiary),
+                      backgroundColor: getColor(c.inYear, c.hasDiary, emptyColor),
                     },
                     c.isToday && styles.todayCell,
                   ]}
@@ -174,70 +182,53 @@ export default function ContributionGraph({ diaries, onDayPress }: Props) {
               ))}
             </View>
           </ScrollView>
-
-          {/* 말풍선 툴팁 */}
-          {tooltip && (() => {
-            const TOOLTIP_W = 180;
-            const TOOLTIP_H = 62;
-            // row 4~6(하단)이면 툴팁을 위에, 나머지는 아래에
-            const showAbove = tooltip.row >= 4;
-            // 셀 중앙 x (스크린 기준)
-            const cellCenterX = tooltip.x + CELL / 2;
-            // 툴팁 left: 셀 중앙에 맞추되 4px 이상 유지
-            const tooltipLeft = Math.max(4, cellCenterX - TOOLTIP_W / 2);
-            // 화살표 left: 툴팁 내부에서 셀 중앙을 가리키도록, 양 끝 8px 여백
-            const arrowLeft = Math.max(8, Math.min(cellCenterX - tooltipLeft - 7, TOOLTIP_W - 22));
-
-            return (
-              <Animated.View
-                style={[
-                  styles.tooltip,
-                  {
-                    opacity: fadeAnim,
-                    left: tooltipLeft,
-                    top: showAbove
-                      ? tooltip.y - TOOLTIP_H - 8   // 셀 위에 표시
-                      : tooltip.y + CELL + 6,        // 셀 아래 표시
-                  },
-                ]}
-                pointerEvents="none"
-              >
-                <Text style={styles.tooltipDate}>{toKorDate(tooltip.date)}</Text>
-                <Text style={styles.tooltipBody} numberOfLines={2}>
-                  {tooltip.content
-                    ? tooltip.content.slice(0, 40) + (tooltip.content.length > 40 ? '…' : '')
-                    : '기록 없음'}
-                </Text>
-                {/* 말풍선 꼬리 — 방향 + 위치 동적 적용 */}
-                <View
-                  style={[
-                    styles.tooltipArrowBase,
-                    showAbove
-                      ? styles.tooltipArrowDown   // ↓ 아래 화살표 (툴팁이 위에 있을 때)
-                      : styles.tooltipArrowUp,    // ↑ 위 화살표  (툴팁이 아래에 있을 때)
-                    { left: arrowLeft },
-                  ]}
-                />
-              </Animated.View>
-            );
-          })()}
         </View>
       </View>
 
-      {/* 범례 */}
-      <View style={styles.legend}>
-        <Text style={styles.legendText}>없음</Text>
-        {['#EDE8E3','#F59E0B'].map((c) => (
-          <View key={c} style={[styles.legendCell, { backgroundColor: c }]} />
-        ))}
-        <Text style={styles.legendText}>있음</Text>
-      </View>
+      {/* 말풍선 툴팁 — overflow:hidden 밖에서 렌더링 */}
+      {tooltip && (() => {
+        const TOOLTIP_H = 90;
+        const showAbove   = tooltip.row >= 4;
+        const cellCenterX = tooltip.x + CELL / 2;
+        const tooltipLeft = Math.max(4, cellCenterX - TOOLTIP_W / 2);
+        const arrowLeft   = Math.max(8, Math.min(cellCenterX - tooltipLeft - 7, TOOLTIP_W - 22));
+
+        return (
+          <Animated.View
+            style={[
+              styles.tooltip,
+              {
+                opacity: fadeAnim,
+                left: tooltipLeft,
+                top: showAbove
+                  ? tooltip.y - TOOLTIP_H - 8
+                  : tooltip.y + CELL + 6,
+              },
+            ]}
+            pointerEvents="none"
+          >
+            <Text style={styles.tooltipDate}>{toKorDate(tooltip.date)}</Text>
+            <Text style={styles.tooltipBody} numberOfLines={8}>
+              {tooltip.content ?? '기록 없음'}
+            </Text>
+            <View
+              style={[
+                styles.tooltipArrowBase,
+                showAbove ? styles.tooltipArrowDown : styles.tooltipArrowUp,
+                { left: arrowLeft },
+              ]}
+            />
+          </Animated.View>
+        );
+      })()}
+
+      {/* 범례 제거됨 */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper:     { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 6 },
+  wrapper:     { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 6, overflow: 'visible' },
   outerRow:    { flexDirection: 'row' },
   dayLabelCol: { flexDirection: 'column', width: 20 },
   dayLabel:    { fontSize: 9, color: '#78716C' },
@@ -248,7 +239,7 @@ const styles = StyleSheet.create({
     width: CELL, height: CELL,
     borderRadius: 3,
   },
-  todayCell: { borderWidth: 2, borderColor: '#D97706' },
+  todayCell: { borderWidth: 2, borderColor: '#d97706' },
 
   // 말풍선
   tooltip: {
@@ -257,7 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    width: 180,
+    width: TOOLTIP_W,
     shadowColor: '#000',
     shadowOpacity: 0.25,
     shadowRadius: 8,

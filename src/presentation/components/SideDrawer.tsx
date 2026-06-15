@@ -22,7 +22,7 @@ const MENU_ITEMS: MenuItem[] = [
   { icon: '📅', label: '캘린더',         route: '/calendar' },
   { icon: '📚', label: '과거 일기 기록', route: '/records' },
   { icon: '⭐', label: '즐겨찾기',       route: '/favorites' },
-  { icon: '👤', label: '프로필',         route: undefined },
+  { icon: '👤', label: '프로필',         route: '/profile' },
   { icon: '⚙️', label: '설정',          route: '/settings' },
 ];
 
@@ -37,13 +37,13 @@ export default function SideDrawer({ visible, onClose, onTopicPrompt }: Props) {
   useEffect(() => {
     if (visible) {
       Animated.parallel([
-        Animated.spring(translateX, { toValue: 0, useNativeDriver: true, tension: 80, friction: 12 }),
-        Animated.timing(overlayOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(translateX, { toValue: 0, duration: 180, useNativeDriver: true }),
+        Animated.timing(overlayOpacity, { toValue: 1, duration: 150, useNativeDriver: true }),
       ]).start();
     } else {
       Animated.parallel([
-        Animated.timing(translateX, { toValue: -DRAWER_W, duration: 220, useNativeDriver: true }),
-        Animated.timing(overlayOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(translateX, { toValue: -DRAWER_W, duration: 160, useNativeDriver: true }),
+        Animated.timing(overlayOpacity, { toValue: 0, duration: 150, useNativeDriver: true }),
       ]).start();
     }
   }, [visible]);
@@ -61,7 +61,8 @@ export default function SideDrawer({ visible, onClose, onTopicPrompt }: Props) {
       <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
         {/* 앱 이름 헤더 */}
         <View style={styles.drawerHeader}>
-          <Text style={styles.drawerAppName}>Morning Pages ☀️</Text>
+          <Text style={styles.drawerAppName}>Morning{'\n'}Pages</Text>
+          <Text style={styles.drawerAppSub}>매일의 기록</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
             <Text style={styles.closeBtnText}>✕</Text>
           </TouchableOpacity>
@@ -114,44 +115,63 @@ export default function SideDrawer({ visible, onClose, onTopicPrompt }: Props) {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.55)',
   },
   drawer: {
     position: 'absolute',
     top: 0, left: 0, bottom: 0,
     width: DRAWER_W,
-    backgroundColor: '#FFFBF5',
+    backgroundColor: '#25282b',   // Ink — 다크 드로어
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 16,
+    shadowOpacity: 0.35,
+    shadowRadius: 20,
+    elevation: 20,
   },
   drawerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 56,
-    paddingBottom: 20,
+    paddingBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#E7E5E4',
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
-  drawerAppName: { fontSize: 17, fontWeight: '700', color: '#1C1917' },
-  closeBtn: { padding: 4 },
-  closeBtnText: { fontSize: 16, color: '#78716C' },
-  menuList: { paddingTop: 12 },
+  drawerAppName: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#ffffff',
+    letterSpacing: -0.5,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  drawerAppSub: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: 'rgba(255,255,255,0.35)',
+  },
+  closeBtn:     { position: 'absolute', top: 56, right: 20, padding: 4 },
+  closeBtnText: { fontSize: 18, color: 'rgba(255,255,255,0.5)' },
+
+  menuList: { paddingTop: 8 },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    paddingVertical: 15,
-    paddingHorizontal: 22,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
-  menuIcon:         { fontSize: 20 },
-  menuLabel:        { fontSize: 16, color: '#1C1917', fontWeight: '500' },
-  menuItemDisabled: { opacity: 0.35 },
-  menuLabelDisabled:{ color: '#A8A29E' },
-  menuSub:   { fontSize: 12, color: '#A8A29E', marginTop: 2 },
-  divider:   { height: 1, backgroundColor: '#E7E5E4', marginHorizontal: 22, marginVertical: 8 },
-  version: { position: 'absolute', bottom: 32, left: 22, fontSize: 12, color: '#A8A29E' },
+  menuIcon:          { fontSize: 18 },
+  menuLabel:         { fontSize: 15, color: '#ffffff', fontWeight: '500' },
+  menuItemDisabled:  { opacity: 0.3 },
+  menuLabelDisabled: { color: 'rgba(255,255,255,0.4)' },
+  menuSub:           { fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 },
+  divider:           { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginHorizontal: 20, marginVertical: 6 },
+
+  version: {
+    position: 'absolute',
+    bottom: 32,
+    left: 20,
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.2)',
+    fontWeight: '600',
+    letterSpacing: 1,
+  },
 });

@@ -3,6 +3,7 @@ import {
   View, Text, Switch, TouchableOpacity,
   StyleSheet, ScrollView, Platform, Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import {
   loadNotificationTime,
   saveNotificationTime,
@@ -16,6 +17,7 @@ import { CustomTopicRepository, CustomTopic } from '../../data/repositories/Cust
 const topicRepo = new CustomTopicRepository();
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const { isDark, fontSize, colors, fontScale, toggleDark, setFontSize } = useTheme();
 
   // 알림
@@ -108,6 +110,18 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView style={[s.container]} contentContainerStyle={s.content}>
+
+      {/* ── 프로필 ── */}
+      <Text style={s.sectionTitle}>프로필</Text>
+      <View style={s.card}>
+        <TouchableOpacity style={[s.row, { borderBottomWidth: 0 }]} onPress={() => router.push('/profile')}>
+          <View>
+            <Text style={s.rowLabel}>프로필 편집</Text>
+            <Text style={s.rowSub}>슬로건 · 생일 설정</Text>
+          </View>
+          <Text style={[s.rowSub, { fontSize: 20 }]}>›</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* ── 알림 ── */}
       <Text style={s.sectionTitle}>알림</Text>
@@ -254,6 +268,7 @@ export default function SettingsScreen() {
           <Text style={s.rowSub}>기기 로컬 (오프라인)</Text>
         </View>
       </View>
+
 
     </ScrollView>
   );

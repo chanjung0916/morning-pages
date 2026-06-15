@@ -25,7 +25,6 @@ export class SaveDiaryUseCase {
       id: generateId(),
       date: draft.date || today(),
       content: draft.content.trim(),
-      mood: draft.mood,
       topicId: draft.topicId,
       createdAt: now,
       updatedAt: now,
