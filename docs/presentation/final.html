@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morning Pages ☀️ — 최종 발표</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+
+  <style>
+    /* ── Design Tokens (중간발표 동일) ── */
+    :root {
+      --dark:     #181715;
+      --light:    #FAF9F5;
+      --card:     #EFE9DE;
+      --accent1:  #CC785C;
+      --accent2:  #E8A55A;
+      --accent3:  #5DB8A6;
+      --text-pri: #141413;
+      --text-sec: #6C6A64;
+      --text-mut: #8E8B82;
+      --white:    #FAF9F5;
+    }
+
+    * { box-sizing: border-box; }
+
+    .reveal {
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+      padding: 0;
+      height: 100%;
+    }
+
+    .slide-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 28px 52px 44px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .chapter-label {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: var(--accent1);
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .slide-title-text {
+      font-size: 2.4em;
+      font-weight: 700;
+      color: var(--text-pri);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .slide-sub {
+      font-size: 1.2em;
+      color: var(--text-sec);
+      margin-bottom: 18px;
+    }
+
+    .hdivider {
+      border: none;
+      border-top: 1px solid #DDD8CF;
+      margin: 0 0 18px;
+    }
+
+    .slide-footer {
+      position: absolute;
+      bottom: 14px;
+      left: 52px;
+      right: 52px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      color: var(--text-mut);
+    }
+
+    /* ── SLIDE 1: 타이틀 ── */
+    .s1 { background: var(--dark) !important; }
+
+    .s1 .left-stripe {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      background: var(--accent1);
+    }
+
+    .s1 .app-name {
+      font-size: 3.6em;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+      margin: 10px 0 8px;
+    }
+
+    .s1 .tagline {
+      font-size: 1.4em;
+      color: #A09D96;
+      margin-bottom: 24px;
+    }
+
+    .s1 .meta {
+      font-size: 1.1em;
+      color: var(--text-mut);
+      border-top: 1px solid #2A2724;
+      padding-top: 16px;
+      margin-bottom: 12px;
+    }
+
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .badge {
+      background: #242220;
+      border: 1px solid #3A3633;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 1.1em;
+      color: #A09D96;
+    }
+
+    .s1 .deco-circle-1 {
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: var(--accent1);
+      opacity: 0.9;
+    }
+    .s1 .deco-circle-2 {
+      position: absolute;
+      right: 10px; top: 10px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: var(--dark);
+    }
+
+    .s1-footer {
+      position: absolute;
+      bottom: 14px;
+      right: 52px;
+      font-size: 1.0em;
+      font-weight: 700;
+      color: var(--accent1);
+    }
+
+    /* ── 라이트 슬라이드 공통 ── */
+    .sl { background: var(--light) !important; }
+
+    /* ── 문제 카드 2x2 ── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pcard {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent1);
+    }
+    .pcard.c2 { border-left-color: var(--accent2); }
+    .pcard.c3 { border-left-color: var(--accent3); }
+    .pcard.c4 { border-left-color: #A09D96; }
+
+    .pcard-num { font-size: 1.5em; font-weight: 800; color: var(--accent1); margin-bottom: 3px; }
+    .pcard.c2 .pcard-num { color: var(--accent2); }
+    .pcard.c3 .pcard-num { color: var(--accent3); }
+    .pcard.c4 .pcard-num { color: #A09D96; }
+
+    .pcard-title { font-size: 1.2em; font-weight: 700; color: var(--text-pri); margin-bottom: 3px; }
+    .pcard-desc  { font-size: 1.05em; color: var(--text-sec); line-height: 1.5; }
+
+    /* ── 비전 인용 ── */
+    .vision-quote {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .vision-bar {
+      width: 4px; min-height: 48px;
+      background: var(--accent1);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .vision-text {
+      font-size: 1.35em;
+      font-weight: 700;
+      color: var(--text-pri);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* ── 기능 카드 3x2 ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .fcard {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 14px;
+    }
+
+    .fcard-icon { font-size: 1.8em; margin-bottom: 6px; }
+    .fcard-name { font-size: 1.2em; font-weight: 700; color: var(--text-pri); margin-bottom: 4px; }
+    .fcard-desc { font-size: 1.0em; color: var(--text-sec); line-height: 1.4; }
+
+    /* ── 아키텍처 ── */
+    .arch-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      justify-content: center;
+    }
+
+    .arch-box {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 16px 12px 12px;
+      text-align: center;
+      flex: 1;
+      border-top: 4px solid var(--accent1);
+    }
+    .arch-box.ab2 { border-top-color: #10B981; background: #D1FAE5; }
+    .arch-box.ab3 { border-top-color: #EC4899; background: #FCE7F3; }
+    .arch-box.ab4 { border-top-color: var(--accent2); background: #FEF3C7; }
+
+    .arch-icon { font-size: 2.0em; margin-bottom: 6px; }
+    .arch-name { font-size: 1.15em; font-weight: 700; color: var(--text-pri); margin-bottom: 4px; }
+    .arch-sub  { font-size: 1.0em; color: var(--text-sec); line-height: 1.4; }
+
+    .arch-arrow {
+      font-size: 1.8em;
+      color: var(--accent1);
+      padding: 0 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .arch-caption {
+      text-align: center;
+      font-size: 1.0em;
+      color: var(--text-sec);
+      margin-top: 14px;
+    }
+
+    .test-badge {
+      background: #D1FAE5;
+      color: #065F46;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 1.1em;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    /* ── 기술 스택 ── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .scard {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .scard-icon { font-size: 2.0em; flex-shrink: 0; margin-top: 2px; }
+    .scard-name { font-size: 1.2em; font-weight: 700; color: var(--text-pri); margin-bottom: 3px; }
+    .scard-desc { font-size: 1.05em; color: var(--text-sec); }
+
+    /* ── WBS 테이블 ── */
+    .wbs-table { width: 100%; border-collapse: collapse; font-size: 1.05em; }
+
+    .wbs-table th {
+      background: var(--dark);
+      color: #FAF9F5;
+      padding: 7px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .wbs-table td {
+      padding: 6px 12px;
+      border-bottom: 1px solid #DDD8CF;
+      color: var(--text-pri);
+      vertical-align: middle;
+    }
+
+    .wbs-table tr:nth-child(even) td { background: #F4EFE7; }
+
+    .badge-done { background:#D1FAE5; color:#065F46; border-radius:999px; padding:2px 9px; font-weight:700; font-size:0.9em; }
+
+    /* ── 시행착오 ── */
+    .trial-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .trial-num {
+      font-size: 1.5em;
+      font-weight: 800;
+      color: var(--accent1);
+      width: 28px;
+      flex-shrink: 0;
+    }
+    .trial-num.t2 { color: var(--accent2); }
+    .trial-num.t3 { color: var(--accent3); }
+
+    .trial-problem {
+      flex: 1;
+      background: var(--card);
+      border-radius: 6px;
+      padding: 10px 14px;
+      border-left: 3px solid var(--accent1);
+    }
+    .trial-problem.t2 { border-left-color: var(--accent2); }
+    .trial-problem.t3 { border-left-color: var(--accent3); }
+
+    .trial-label { font-size: 0.85em; font-weight: 700; color: var(--accent1); margin-bottom: 2px; }
+    .trial-problem.t2 .trial-label { color: var(--accent2); }
+    .trial-problem.t3 .trial-label { color: var(--accent3); }
+    .trial-ptxt { font-size: 1.1em; font-weight: 700; color: var(--text-pri); }
+
+    .trial-arrow { font-size: 1.5em; color: var(--accent1); flex-shrink: 0; }
+
+    .trial-solution {
+      flex: 1;
+      background: #D1FAE5;
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+
+    .trial-slabel { font-size: 0.85em; font-weight: 700; color: #065F46; margin-bottom: 2px; }
+    .trial-stxt   { font-size: 1.05em; color: #065F46; line-height: 1.4; }
+
+    /* ── 테스트 & ADR ── */
+    .qa-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .qa-panel {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .qa-panel.right { background: #EDE9FE; }
+
+    .qa-panel-title { font-size: 1.2em; font-weight: 700; color: var(--text-pri); margin-bottom: 10px; }
+
+    .stat-row { display: flex; gap: 14px; margin-bottom: 12px; }
+
+    .stat-block { text-align: center; flex: 1; }
+    .stat-num   { font-size: 2.4em; font-weight: 800; color: var(--accent1); line-height: 1; }
+    .stat-lbl   { font-size: 0.9em; color: var(--text-sec); margin-top: 2px; }
+
+    .test-list { font-size: 1.0em; color: var(--text-sec); line-height: 1.7; }
+
+    .adr-item { margin-bottom: 10px; }
+    .adr-num  { font-size: 0.85em; font-weight: 700; color: #7C3AED; margin-bottom: 1px; }
+    .adr-name { font-size: 1.1em; font-weight: 700; color: var(--text-pri); }
+    .adr-desc { font-size: 0.95em; color: var(--text-sec); }
+
+    /* ── 개발환경 & 배포 ── */
+    .dev-split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .dev-panel { background: var(--card); border-radius: 6px; padding: 16px; }
+    .dev-panel.right { background: #FEF3C7; }
+    .dev-panel-title { font-size: 1.15em; font-weight: 700; color: var(--text-pri); margin-bottom: 12px; }
+
+    .step-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+
+    .step-circle {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--accent1);
+      color: #fff;
+      font-size: 1.0em;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-name { font-size: 1.1em; font-weight: 700; color: var(--text-pri); margin-bottom: 2px; }
+    .step-desc { font-size: 0.95em; color: var(--text-sec); }
+
+    .deploy-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+
+    .deploy-phase {
+      background: var(--accent2);
+      color: #fff;
+      font-size: 0.85em;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .deploy-name { font-size: 1.1em; font-weight: 700; color: var(--text-pri); }
+    .deploy-desc { font-size: 0.9em; color: var(--text-sec); }
+
+    /* ── 향후 발전 카드 3열 ── */
+    .future-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+    .future-card {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 20px 16px;
+      border-top: 4px solid var(--accent1);
+    }
+    .future-card.fc2 { border-top-color: var(--accent2); }
+    .future-card.fc3 { border-top-color: var(--accent3); }
+
+    .fc-num  { font-size: 1.0em; font-weight: 800; color: var(--accent1); margin-bottom: 6px; }
+    .future-card.fc2 .fc-num { color: var(--accent2); }
+    .future-card.fc3 .fc-num { color: var(--accent3); }
+
+    .fc-icon { font-size: 2.2em; margin-bottom: 8px; }
+    .fc-name { font-size: 1.2em; font-weight: 700; color: var(--text-pri); margin-bottom: 6px; }
+    .fc-desc { font-size: 1.0em; color: var(--text-sec); line-height: 1.5; }
+
+    /* ── SLIDE 11: 클로징 (테라코타) ── */
+    .s11 { background: var(--accent1) !important; }
+
+    .s11 .big-num {
+      font-size: 5.5em;
+      font-weight: 800;
+      color: rgba(255,255,255,0.2);
+      line-height: 1;
+      margin-bottom: -10px;
+    }
+
+    .s11 .closing-label {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .s11 .closing-title {
+      font-size: 3.0em;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .s11 .closing-sub {
+      font-size: 1.2em;
+      color: #FAD4C0;
+      margin-bottom: 22px;
+    }
+
+    .closing-cards { display: flex; gap: 12px; }
+
+    .ccard {
+      flex: 1;
+      background: rgba(0,0,0,0.15);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .ccard-icon { font-size: 1.8em; margin-bottom: 6px; }
+    .ccard-name { font-size: 1.2em; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .ccard-desc { font-size: 1.0em; color: #FAD4C0; line-height: 1.4; }
+
+    .s11 .deco-c1 {
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .s11 .deco-c2 {
+      position: absolute;
+      right: 40px; bottom: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .s11-footer {
+      position: absolute;
+      bottom: 14px;
+      right: 52px;
+      font-size: 1.0em;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Reveal overrides */
+    .reveal .slides { text-align: left; }
+    .reveal .progress { color: var(--accent1); }
+    .reveal .controls { color: var(--accent1); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 1  타이틀 (다크) -->
+    <!-- ══════════════════════════════════ -->
+    <section class="s1">
+      <div class="slide-inner">
+        <div class="left-stripe"></div>
+        <div class="deco-circle-1"></div>
+        <div class="deco-circle-2"></div>
+
+        <div class="slide-body" style="justify-content:flex-start; padding-top:24px;">
+          <div class="chapter-label">FINAL PRESENTATION</div>
+          <div class="app-name">Morning Pages ☀️</div>
+          <div class="tagline">매일 아침 2~3분, 오늘의 나를 내가 정한다</div>
+
+          <div class="meta">2026 &nbsp;앱프로그래밍응용 &nbsp;|&nbsp; 최종 발표</div>
+
+          <div class="badge-row">
+            <span class="badge">📱 React Native</span>
+            <span class="badge">🔷 TypeScript</span>
+            <span class="badge">💾 AsyncStorage</span>
+            <span class="badge">🏛 Layered Architecture</span>
+            <span class="badge">✅ 테스트 11개</span>
+          </div>
+        </div>
+
+        <div class="s1-footer">morning pages</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 2  비전 & 문제 정의 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 01 &nbsp;—&nbsp; 비전 & 문제 정의</div>
+        <div class="slide-title-text">왜 만들었나?</div>
+        <div class="slide-sub">매일이 똑같고 반복되는 하루, 하지만 시간은 앞으로 나아간다</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="vision-quote">
+            <div class="vision-bar"></div>
+            <div class="vision-text">"매일 아침 2~3분, 오늘의 나를 내가 정하는 시간"</div>
+          </div>
+
+          <div class="problem-grid">
+            <div class="pcard">
+              <div class="pcard-num">01</div>
+              <div class="pcard-title">📓 종이 일기 — 휴대 불편</div>
+              <div class="pcard-desc">가방에 넣고 다녀야 하고<br>분실하면 모두 사라진다</div>
+            </div>
+            <div class="pcard c2">
+              <div class="pcard-num">02</div>
+              <div class="pcard-title">📝 메모앱 — 무엇을 써야 할지 모름</div>
+              <div class="pcard-desc">빈 화면 앞에서 멈추는 경험<br>주제 제안이 없다</div>
+            </div>
+            <div class="pcard c3">
+              <div class="pcard-num">03</div>
+              <div class="pcard-title">🔔 습관 형성 어려움</div>
+              <div class="pcard-desc">유도하는 알림·루틴이 없어<br>금방 잊어버린다</div>
+            </div>
+            <div class="pcard c4">
+              <div class="pcard-num">04</div>
+              <div class="pcard-title">🔍 과거 기록 탐색 불편</div>
+              <div class="pcard-desc">날짜·주제별 과거 일기를<br>찾기 어렵다</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>2</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 3  완성된 주요 기능 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 02 &nbsp;—&nbsp; 주요 기능</div>
+        <div class="slide-title-text">완성된 주요 기능</div>
+        <div class="slide-sub">오프라인 완전 동작 · 100% 로컬 저장 · Must / Should / Could 모두 구현</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="feat-grid">
+            <div class="fcard">
+              <div class="fcard-icon">✍️</div>
+              <div class="fcard-name">아침 일기 작성</div>
+              <div class="fcard-desc">날짜별 작성 · 수정 · 삭제<br>오늘의 주제 프롬프트 제공</div>
+            </div>
+            <div class="fcard">
+              <div class="fcard-icon">✨</div>
+              <div class="fcard-name">AI 주제 생성</div>
+              <div class="fcard-desc">ChatGPT/Claude에 보낼<br>프롬프트 자동 생성</div>
+            </div>
+            <div class="fcard">
+              <div class="fcard-icon">📊</div>
+              <div class="fcard-name">잔디 기여 그래프</div>
+              <div class="fcard-desc">연간 작성 현황 시각화<br>날짜 탭으로 바로 이동</div>
+            </div>
+            <div class="fcard">
+              <div class="fcard-icon">★</div>
+              <div class="fcard-name">즐겨찾기</div>
+              <div class="fcard-desc">마음에 드는 일기 별표<br>카테고리 필터 제공</div>
+            </div>
+            <div class="fcard">
+              <div class="fcard-icon">📅</div>
+              <div class="fcard-name">캘린더 & 기록</div>
+              <div class="fcard-desc">월별 캘린더 뷰<br>연도·월 2단계 필터</div>
+            </div>
+            <div class="fcard">
+              <div class="fcard-icon">🔔</div>
+              <div class="fcard-name">알림 & 설정</div>
+              <div class="fcard-desc">매일 정해진 시간 알림<br>다크모드 · 폰트 크기 설정</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>3</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 4  아키텍처 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 03 &nbsp;—&nbsp; 아키텍처</div>
+        <div class="slide-title-text">아키텍처</div>
+        <div class="slide-sub">Layered Architecture + MVVM — 단방향 의존, 레이어 격리</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="arch-flow">
+            <div class="arch-box">
+              <div class="arch-icon">📱</div>
+              <div class="arch-name">Presentation</div>
+              <div class="arch-sub">Screens<br>Components</div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab2">
+              <div class="arch-icon">⚙️</div>
+              <div class="arch-name">Application</div>
+              <div class="arch-sub">Context<br>ViewModel</div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab3">
+              <div class="arch-icon">🎯</div>
+              <div class="arch-name">Domain</div>
+              <div class="arch-sub">UseCase<br>Entity</div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box ab4">
+              <div class="arch-icon">💾</div>
+              <div class="arch-name">Data</div>
+              <div class="arch-sub">Repository<br>AsyncStorage</div>
+            </div>
+          </div>
+
+          <div class="arch-caption">
+            사용자 인터랙션 → 화면 렌더링 → 비즈니스 로직 → 데이터 저장
+          </div>
+
+          <div class="test-badge">
+            ✅ &nbsp;Domain 레이어는 React Native 없이 Jest만으로 단위 테스트 가능 — 11개 통과
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>4</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 5  기술 스택 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 03 &nbsp;—&nbsp; 기술 스택</div>
+        <div class="slide-title-text">기술 스택</div>
+        <div class="slide-sub">단일 코드베이스 · 오프라인 우선 설계</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="stack-grid">
+            <div class="scard">
+              <div class="scard-icon">⚛️</div>
+              <div>
+                <div class="scard-name">React Native</div>
+                <div class="scard-desc">iOS · Android 동시 지원</div>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">📦</div>
+              <div>
+                <div class="scard-name">Expo SDK 54</div>
+                <div class="scard-desc">빠른 개발 · 빌드 · 배포</div>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">🔷</div>
+              <div>
+                <div class="scard-name">TypeScript</div>
+                <div class="scard-desc">타입 안전성 보장</div>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">🗂️</div>
+              <div>
+                <div class="scard-name">expo-router</div>
+                <div class="scard-desc">파일 기반 라우팅</div>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">💾</div>
+              <div>
+                <div class="scard-name">AsyncStorage</div>
+                <div class="scard-desc">완전 오프라인 동작</div>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">🧪</div>
+              <div>
+                <div class="scard-name">Jest + ts-jest</div>
+                <div class="scard-desc">UseCase · Repository 단위 테스트</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>5</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 6  WBS 완료 현황 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 04 &nbsp;—&nbsp; WBS 완료 현황</div>
+        <div class="slide-title-text">WBS — 14주 개발 완료</div>
+        <div class="slide-sub">기획부터 배포 문서까지 전 단계 완성</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <table class="wbs-table">
+            <thead>
+              <tr>
+                <th style="width:14%">기간</th>
+                <th style="width:66%">작업 내용</th>
+                <th style="width:20%">상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1~2주</td>
+                <td>기획 · 아키텍처 설계 · 환경 설정</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>3~4주</td>
+                <td>핵심 CRUD · Diary Entity · Repository · UseCase</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>5~6주</td>
+                <td>주제/프롬프트 시스템 · AI 프롬프트 생성 모달</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>7~8주</td>
+                <td>잔디 그래프 · 캘린더 · 사이드 드로어 · 다크테마</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>9~10주</td>
+                <td>즐겨찾기 · 과거 기록 · 날짜 필터 · 주제 배지</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>11~12주</td>
+                <td>알림 · 설정 · 다크모드 · 폰트 크기 · 프로필</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+              <tr>
+                <td>13~14주</td>
+                <td>단위 테스트 11개 · ADR 3개 · 문서화 · 발표 준비</td>
+                <td><span class="badge-done">✅ 완료</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="background:#DDD8CF;border-radius:999px;height:7px;margin-top:14px;overflow:hidden;">
+            <div style="background:linear-gradient(90deg,var(--accent1),var(--accent2));height:100%;width:100%;border-radius:999px;"></div>
+          </div>
+          <div style="font-size:1.0em;color:var(--text-sec);text-align:right;margin-top:4px;">전체 진행률 100% 완성</div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>6</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 7  구현 시행착오 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 05 &nbsp;—&nbsp; 구현 시행착오</div>
+        <div class="slide-title-text">구현 시행착오 & 해결</div>
+        <div class="slide-sub">ADR에 결정 근거를 기록해 추적 가능하게 관리</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="trial-row">
+            <div class="trial-num">01</div>
+            <div class="trial-problem">
+              <div class="trial-label">문제</div>
+              <div class="trial-ptxt">expo-notifications Expo Go 에러</div>
+            </div>
+            <div class="trial-arrow">→</div>
+            <div class="trial-solution">
+              <div class="trial-slabel">해결</div>
+              <div class="trial-stxt">동적 import로 Expo Go 환경 감지 후 우회 처리</div>
+            </div>
+          </div>
+
+          <div class="trial-row">
+            <div class="trial-num t2">02</div>
+            <div class="trial-problem t2">
+              <div class="trial-label">문제</div>
+              <div class="trial-ptxt">잔디 툴팁이 overflow:hidden에 잘림</div>
+            </div>
+            <div class="trial-arrow">→</div>
+            <div class="trial-solution">
+              <div class="trial-slabel">해결</div>
+              <div class="trial-stxt">ScrollView 외부로 툴팁 분리 · 절대좌표 + measureInWindow</div>
+            </div>
+          </div>
+
+          <div class="trial-row">
+            <div class="trial-num t3">03</div>
+            <div class="trial-problem t3">
+              <div class="trial-label">문제</div>
+              <div class="trial-ptxt">AsyncStorage vs SQLite 선택</div>
+            </div>
+            <div class="trial-arrow">→</div>
+            <div class="trial-solution">
+              <div class="trial-slabel">해결 (ADR-001)</div>
+              <div class="trial-stxt">일기 앱 규모에서 JOIN 불필요 · 오프라인 우선 · 설정 단순화</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>7</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 8  테스트 & ADR -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 06 &nbsp;—&nbsp; 코드 품질 관리</div>
+        <div class="slide-title-text">코드 품질 관리</div>
+        <div class="slide-sub">단위 테스트 · 통합 테스트 · 아키텍처 의사결정 기록</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="qa-split">
+            <!-- 테스트 -->
+            <div class="qa-panel">
+              <div class="qa-panel-title">🧪 테스트 결과</div>
+              <div class="stat-row">
+                <div class="stat-block">
+                  <div class="stat-num">11</div>
+                  <div class="stat-lbl">전체 통과</div>
+                </div>
+                <div class="stat-block">
+                  <div class="stat-num">2</div>
+                  <div class="stat-lbl">테스트 파일</div>
+                </div>
+                <div class="stat-block">
+                  <div class="stat-num">100%</div>
+                  <div class="stat-lbl">통과율</div>
+                </div>
+              </div>
+              <div class="test-list">
+                ✅ SaveDiaryUseCase — 빈 내용 저장 방지<br>
+                ✅ SaveDiaryUseCase — 날짜 설정 검증<br>
+                ✅ DiaryRepository — CRUD 전체<br>
+                ✅ DiaryRepository — 즐겨찾기 토글<br>
+                ✅ 비행기 모드 — 전체 기능 정상
+              </div>
+            </div>
+
+            <!-- ADR -->
+            <div class="qa-panel right">
+              <div class="qa-panel-title">📋 ADR (Architecture Decision Record)</div>
+              <div class="adr-item">
+                <div class="adr-num">ADR-001</div>
+                <div class="adr-name">AsyncStorage 채택</div>
+                <div class="adr-desc">오프라인 우선 · 개인 데이터 기기 보관 · 설정 단순화</div>
+              </div>
+              <div class="adr-item">
+                <div class="adr-num">ADR-002</div>
+                <div class="adr-name">Expo Managed Workflow</div>
+                <div class="adr-desc">빠른 개발 · Expo Go 테스트 · EAS 빌드 자동화</div>
+              </div>
+              <div class="adr-item">
+                <div class="adr-num">ADR-003</div>
+                <div class="adr-name">Layered Architecture</div>
+                <div class="adr-desc">테스트 용이 · 변경 격리 · AI Agent 협업 용이</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>8</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 9  개발 환경 & 빌드·배포 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 07 &nbsp;—&nbsp; 개발 환경 & 빌드·배포</div>
+        <div class="slide-title-text">개발 환경 & 빌드·배포</div>
+        <div class="slide-sub">3단계 설치, 클라우드 빌드로 APK 자동 생성</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="dev-split">
+            <!-- 개발 환경 -->
+            <div class="dev-panel">
+              <div class="dev-panel-title">🛠 개발 환경 설정 (3단계)</div>
+
+              <div class="step-row">
+                <div class="step-circle">1</div>
+                <div>
+                  <div class="step-name">git clone</div>
+                  <div class="step-desc">GitHub에서 소스 복제</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-circle">2</div>
+                <div>
+                  <div class="step-name">npm install</div>
+                  <div class="step-desc">의존성 패키지 설치</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-circle">3</div>
+                <div>
+                  <div class="step-name">npx expo start</div>
+                  <div class="step-desc">Expo Go QR 코드 스캔 → 즉시 실행</div>
+                </div>
+              </div>
+
+              <div style="font-size:0.95em;color:var(--text-mut);margin-top:6px;">
+                Node.js 20 LTS · Expo Go 앱만 있으면 5분 안에 실행
+              </div>
+            </div>
+
+            <!-- 빌드·배포 -->
+            <div class="dev-panel right">
+              <div class="dev-panel-title">🚀 빌드 & 배포 (EAS Build)</div>
+
+              <div class="deploy-row">
+                <div class="deploy-phase">개발 중</div>
+                <div>
+                  <div class="deploy-name">Expo Go</div>
+                  <div class="deploy-desc">QR 코드 → 실시간 확인 (APK 없이 즉시 테스트)</div>
+                </div>
+              </div>
+              <div class="deploy-row">
+                <div class="deploy-phase">테스트</div>
+                <div>
+                  <div class="deploy-name">eas build --profile preview</div>
+                  <div class="deploy-desc">클라우드 APK 자동 생성 · 실기기 설치 검증</div>
+                </div>
+              </div>
+              <div class="deploy-row">
+                <div class="deploy-phase">배포</div>
+                <div>
+                  <div class="deploy-name">eas build --profile production</div>
+                  <div class="deploy-desc">서명된 릴리즈 APK 생성 · Expo 대시보드 다운로드</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>9</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 10  향후 발전 방향 -->
+    <!-- ══════════════════════════════════ -->
+    <section class="sl">
+      <div class="slide-inner">
+        <div class="chapter-label">CHAPTER 08 &nbsp;—&nbsp; 향후 발전 방향</div>
+        <div class="slide-title-text">활용 방안 & 향후 발전 방향</div>
+        <div class="slide-sub">아침 일기 습관을 더 쉽게, 더 풍부하게</div>
+        <hr class="hdivider" />
+
+        <div class="slide-body">
+          <div class="future-grid">
+            <div class="future-card">
+              <div class="fc-num">01</div>
+              <div class="fc-icon">🤖</div>
+              <div class="fc-name">AI 주제 생성 자동화</div>
+              <div class="fc-desc">현재: ChatGPT/Claude에 복사-붙여넣기<br>→ API 직접 연동으로 원탭 주제 생성<br>개인화 프롬프트 추천 알고리즘</div>
+            </div>
+            <div class="future-card fc2">
+              <div class="fc-num">02</div>
+              <div class="fc-icon">☁️</div>
+              <div class="fc-name">클라우드 동기화</div>
+              <div class="fc-desc">현재: 기기 내 로컬 저장<br>→ 로그인 추가 시 기기 간 공유<br>백업 · 복원 기능</div>
+            </div>
+            <div class="future-card fc3">
+              <div class="fc-num">03</div>
+              <div class="fc-icon">📈</div>
+              <div class="fc-name">습관 통계 대시보드</div>
+              <div class="fc-desc">연속 작성일 기록 · 스트릭<br>주제별 일기 분포 시각화<br>월간 리포트 자동 생성</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>morning pages &nbsp;|&nbsp; 최종 발표</span>
+          <span>10</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- SLIDE 11  시연 & 마무리 (테라코타) -->
+    <!-- ══════════════════════════════════ -->
+    <section class="s11">
+      <div class="slide-inner">
+        <div class="deco-c1"></div>
+        <div class="deco-c2"></div>
+
+        <div class="slide-body" style="justify-content:flex-start; padding-top:16px;">
+          <div class="big-num">11</div>
+          <div class="closing-label">DEMO & CLOSING</div>
+          <div class="closing-title">시연 데모 🎬</div>
+          <div class="closing-sub">Morning Pages는 단순한 일기 앱이 아닙니다.<br>하루를 내가 설계하는 2분의 습관입니다.</div>
+
+          <div class="closing-cards">
+            <div class="ccard">
+              <div class="ccard-icon">🏠</div>
+              <div class="ccard-name">홈 화면</div>
+              <div class="ccard-desc">슬로건 · 잔디 그래프<br>오늘 일기 쓰기</div>
+            </div>
+            <div class="ccard">
+              <div class="ccard-icon">✍️</div>
+              <div class="ccard-name">일기 작성</div>
+              <div class="ccard-desc">주제 선택 · 한 문장 입력<br>저장 후 그래프 업데이트</div>
+            </div>
+            <div class="ccard">
+              <div class="ccard-icon">📅</div>
+              <div class="ccard-name">캘린더</div>
+              <div class="ccard-desc">오늘 날짜 점 표시<br>과거 기록 필터</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s11-footer">morning pages</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    controls: true,
+    progress: true,
+    center: false,
+    width: 960,
+    height: 540,
+    margin: 0.04,
+    minScale: 0.2,
+    maxScale: 2.0,
+  });
+</script>
+</body>
+</html>
